@@ -43,12 +43,16 @@ INSTALLED_APPS = [
     'Authentication',
 
     # third-party apps
+    'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
+    'django_rest_passwordreset', 
+
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -63,7 +67,7 @@ ROOT_URLCONF = 'Todo.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [ BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -148,5 +152,26 @@ SIMPLE_JWT = {
 # Use custom user model
 AUTH_USER_MODEL = 'Authentication.User'
 
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
+CORS_ALLOW_HEADERS = ['*']
+
 # Default file storage
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+
+
+#Email verification setup..
+ACCOUNT_USERNAME_REQUIRED = False
+REST_USE_JWT = True
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+
+# Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'test123.moali@gmail.com'
+EMAIL_HOST_PASSWORD = 'zquzxxqleoptctif'

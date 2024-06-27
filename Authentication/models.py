@@ -2,9 +2,8 @@ from django.db import models
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
 from django.conf import settings
-from django.contrib.auth.models import User, AbstractBaseUser, PermissionsMixin
-from .managers import UserManager
-
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from .managers import UserManager  
 
 # Create your models here.
 
@@ -30,32 +29,37 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_absolute_url(self):
         return "/users/%i/" % (self.pk)
 
-def save(self, *args, **kwargs):
-    if not self.pk:  # Check if the object is being created for the first time
-        created = True
-    else:
-        created = False
-
-    if created:
-        # Hash the password if it's set and not hashed already
+    def save(self, *args, **kwargs):
         if self.password and not self.password.startswith("pbkdf2_sha256$"):
             self.password = make_password(self.password)
 
-    super(User,self).save(*args, **kwargs)
-
-    if created:
-        # Create UserProfile if it doesn't exist
-        if not hasattr(self, 'userprofile'):
-            UserProfile.objects.create(user=self)
+        super(User, self).save(*args, **kwargs)
 
     def __str__(self):
-        if self.username:
-            return self.username
-        else:
-            return self.email  
-        
+        return self.username if self.username else self.email
+
+
+class PasswordResetCode(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    code = models.CharField(max_length=6)
+    is_expired = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.code)
+
+
 class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='userprofile')
     full_name = models.CharField(max_length=150, null=True, blank=True)
     username = models.CharField(max_length=50, null=True, blank=True)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    
+    def __str__(self):
+        if self.user.username:
+            return f"{self.user.username}'s Profile"
+        elif self.full_name:
+            return f"{self.full_name}'s Profile"
+        else:
+            return "User Profile"
+    
