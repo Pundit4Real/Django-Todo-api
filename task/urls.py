@@ -7,3 +7,4 @@ urlpatterns = [
     path('tasks/<int:pk>/', TaskRetrieveUpdate.as_view(), name='task-retrieve-update'),
     path('tasks/<int:pk>/delete/', TaskDestroy.as_view(), name='task-destroy'),
 ]
+ 
