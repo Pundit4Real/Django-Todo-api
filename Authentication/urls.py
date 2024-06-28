@@ -12,7 +12,6 @@ urlpatterns = [
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
     path('forgot-password/', ForgotPasswordView.as_view(), name='forgot-password'),
     path('reset-password/', ResetPasswordView.as_view(), name='reset-password'),
-
     # # User Profile URLs
     path('profile/', ProfileView.as_view(), name='profile'),
     path('update-profile/', UserProfileUpdateView.as_view(), name='update-profile'),
