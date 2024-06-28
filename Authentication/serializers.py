@@ -65,9 +65,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop('password_confirm')
         email_verification_code = generate_verification_code()
+        print(f"Generated verification code: {email_verification_code}")  # Debug print
+
         validated_data['email_verification_code'] = email_verification_code
         user = User.objects.create_user(**validated_data)
-        
+
         # Send verification email
         send_email_verification_code(validated_data['email'], email_verification_code)
         return user
