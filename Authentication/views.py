@@ -1,13 +1,13 @@
-from django.shortcuts import render
 import random
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.shortcuts import render
 from django.core.mail import send_mail
+from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
-from django.contrib.auth import update_session_auth_hash
 from django.core.exceptions import ObjectDoesNotExist
-from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import update_session_auth_hash
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
