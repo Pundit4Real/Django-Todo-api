@@ -12,12 +12,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import generics
 from rest_framework.views import APIView
 from Authentication.models import PasswordResetCode
 from Authentication.serializers import (UserRegistrationSerializer,MyTokenObtainPairSerializer,
                                         ChangePasswordSerializer,ForgotPasswordEmailSerializer,
-                                        PasswordResetSerializer
-
+                                        PasswordResetSerializer,UserProfileSerializer,UserProfileUpdateSerializer
                                         )
 # Create your views here.
 
@@ -182,4 +182,27 @@ class ResetPasswordView(APIView):
                 return Response({'detail': 'Invalid reset code.'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-           
+
+class ProfileView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserProfileSerializer 
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = User.objects.filter(email=user.email)
+        return queryset  
+             
+class UserProfileUpdateView(APIView):
+    serializer_class = UserProfileUpdateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+    def put(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.serializer_class(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)

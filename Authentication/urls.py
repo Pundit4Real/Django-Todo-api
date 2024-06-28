@@ -1,6 +1,7 @@
 from django.urls import path
 from Authentication.views import (UserRegistrationView,MyTokenObtainPairView,EmailVerificationView,
-                                  ChangePasswordView,ForgotPasswordView,ResetPasswordView,
+                                  ChangePasswordView,ForgotPasswordView,ResetPasswordView,ProfileView,
+                                  UserProfileUpdateView
                                   )
 
 urlpatterns = [
@@ -13,6 +14,6 @@ urlpatterns = [
     path('reset-password/', ResetPasswordView.as_view(), name='reset-password'),
 
     # # User Profile URLs
-    # path('profile/', ProfileView.as_view(), name='profile'),
-    # path('update-profile/', UserProfileUpdateView.as_view(), name='update-profile'),
+    path('profile/', ProfileView.as_view(), name='profile'),
+    path('update-profile/', UserProfileUpdateView.as_view(), name='update-profile'),
 ]
