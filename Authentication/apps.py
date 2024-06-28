@@ -6,4 +6,4 @@ class AuthenticationConfig(AppConfig):
     name = 'Authentication'
 
     def ready(self):
-        from .signals import profile_signals
+        from .signals import profile_signals,password_reset_signals,tokens
