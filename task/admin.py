@@ -4,6 +4,6 @@ from task.models import Task
 # Register your models here.
 
 class TaskAdmin(admin.ModelAdmin):
-    list_display = ['Title','id','Date_created','Completed']
+    list_display = ['title','id','date_created','completed']
 
 admin.site.register(Task,TaskAdmin)

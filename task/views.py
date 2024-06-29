@@ -12,10 +12,10 @@ class TaskList(generics.ListAPIView):
     queryset = Task.objects.all().order_by('-id')
     serializer_class = TaskSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['Completed', 'assigned_to']
-    search_fields = ['Title', 'Description']
-    ordering_fields = ['Title', 'Completed']
-    ordering = ['Title']
+    filterset_fields = ['completed', 'assigned_to']
+    search_fields = ['title', 'description']
+    ordering_fields = ['title', 'completed']
+    ordering = ['title']
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class TaskRetrieveUpdate(generics.RetrieveUpdateAPIView):

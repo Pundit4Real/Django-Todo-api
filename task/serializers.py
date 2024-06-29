@@ -6,9 +6,9 @@ class TaskSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Task
-        fields = ['id','Title','Description','assigned_to','Completed']
+        fields = ['id','title','description','assigned_to','completed']
 
 class TaskFilter(django_filters.FilterSet):
     class Meta:
         model = Task
-        fields = ['Title', 'Description', 'Completed', 'due_date']
+        fields = ['title', 'description', 'completed', 'due_date']
