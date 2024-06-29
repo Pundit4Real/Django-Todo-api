@@ -9,8 +9,6 @@ class Task(models.Model):
     date_created = models.DateTimeField(default=timezone.now)
     due_date = models.DateTimeField(default=timezone.now)
     completed = models.BooleanField(default=False)
-    assigned_to = models.ForeignKey(User, related_name='tasks', on_delete=models.CASCADE, null=True, blank=True)
-
     class Meta:
         verbose_name_plural = 'Tasks'
 
