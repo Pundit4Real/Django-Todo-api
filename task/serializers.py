@@ -6,7 +6,8 @@ class TaskSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Task
-        fields = ['id','title','description','date_created','due_date','completed']
+        fields = ['id','title','description','date_created','due_date','completed','user']
+        read_only_fields = ['user']
 
 class TaskFilter(django_filters.FilterSet):
     class Meta:
