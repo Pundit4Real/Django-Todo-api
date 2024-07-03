@@ -46,4 +46,4 @@ This repository contains the backend API for a Todo application built with Djang
   - `DELETE /todo/tasks/{id}/delete`
  
 ## Swagger View of the Endpoint
-![Splash Screen](ui/splash.jpg)
+![swagger-view](ui-swagger/swagger.png)
