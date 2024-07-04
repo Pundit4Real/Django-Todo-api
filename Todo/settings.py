@@ -184,7 +184,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'test123.moali@gmail.com'
 EMAIL_HOST_PASSWORD = 'zquzxxqleoptctif'
-# settings.py
+# Feedback email configurations
 DEFAULT_FROM_EMAIL = 'test123.moali@gmail.com'
 FEEDBACK_EMAIL = 'mohammedaalli088@gmail.com'
 
