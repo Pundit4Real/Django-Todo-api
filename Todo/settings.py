@@ -186,5 +186,5 @@ EMAIL_HOST_USER = 'test123.moali@gmail.com'
 EMAIL_HOST_PASSWORD = 'zquzxxqleoptctif'
 # settings.py
 DEFAULT_FROM_EMAIL = 'test123.moali@gmail.com'
-FEEDBACK_EMAIL = 'alimohammedhafiz1998@gmail.com'
+FEEDBACK_EMAIL = 'mohammedaalli088@gmail.com'
 
