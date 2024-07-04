@@ -20,7 +20,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=False)
     last_login = models.DateTimeField(null=True, blank=True)
     date_joined = models.DateTimeField(default=timezone.now)
-
+    
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ['username']
 
