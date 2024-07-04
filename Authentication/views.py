@@ -47,12 +47,13 @@ class EmailVerificationView(APIView):
     def post(self, request):
         verification_code = request.data.get('verification_code')
         email = request.data.get('email')
+        username = request.data.get('username')
 
         if not verification_code or not email:
             return Response({'message': 'Verification code and email are required'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            send_password_reset_code(user.email, verification_code, user.username)
+            send_password_reset_code(email, verification_code, username)
             user = User.objects.get(email_verification_code=verification_code, email=email,is_active=False)
         except User.DoesNotExist:
             return Response({'message': 'Invalid verification code or email'}, status=status.HTTP_400_BAD_REQUEST)
