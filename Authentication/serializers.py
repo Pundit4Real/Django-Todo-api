@@ -43,7 +43,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         fields = ['full_name', 'email', 'username', 'password', 'password_confirm']
         extra_kwargs = {
             'password': {'write_only': True},
-            'username': {'required': False},
+            'username': {'required': True},
             'email': {'required': True}
         }
 
@@ -61,7 +61,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         if data.get('password') != data.get('password_confirm'):
             raise serializers.ValidationError("Passwords do not match.")
         return data
-
+    
     def create(self, validated_data):
         validated_data.pop('password_confirm')
         email_verification_code = generate_verification_code()
@@ -70,7 +70,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
 
         # Send verification email
-        send_email_verification_code(validated_data['email'], email_verification_code)
+        send_email_verification_code(validated_data['email'], email_verification_code,user.username)
         return user
 
 class ChangePasswordSerializer(serializers.Serializer):

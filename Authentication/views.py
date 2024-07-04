@@ -5,6 +5,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
+from django.template.loader import render_to_string
 from django.contrib.auth import update_session_auth_hash
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -15,6 +16,8 @@ from rest_framework import status
 from rest_framework import generics
 from rest_framework.views import APIView
 from Authentication.models import PasswordResetCode
+from Authentication.utils import send_password_reset_code
+
 from Authentication.serializers import (UserRegistrationSerializer,MyTokenObtainPairSerializer,
                                         ChangePasswordSerializer,ForgotPasswordEmailSerializer,
                                         PasswordResetSerializer,UserProfileSerializer,UserProfileUpdateSerializer
@@ -49,7 +52,8 @@ class EmailVerificationView(APIView):
             return Response({'message': 'Verification code and email are required'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            user = User.objects.get(email_verification_code=verification_code, email=email, is_active=False)
+            send_password_reset_code(user.email, verification_code, user.username)
+            user = User.objects.get(email_verification_code=verification_code, email=email,is_active=False)
         except User.DoesNotExist:
             return Response({'message': 'Invalid verification code or email'}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -101,7 +105,6 @@ class ChangePasswordView(APIView):
                 return Response({'error': 'Incorrect old password.'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
 class ForgotPasswordView(APIView):
     def generate_numeric_code(self):
         # Generate a 6-digit numeric code
@@ -115,27 +118,21 @@ class ForgotPasswordView(APIView):
             try:
                 user = User.objects.get(email=email)
             except User.DoesNotExist:
-                return Response({'detail': 'No user with that email address.'}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'detail': 'No user with this email address exist.'}, status=status.HTTP_404_NOT_FOUND)
 
             # Generate and store a unique 6-digit numeric code
             code = self.generate_numeric_code()
-            print("Generated code:", code)  # Print the generated code for debugging purposes
             PasswordResetCode.objects.create(user=user, code=code)
 
-            # Send the code to the user's email
-            subject = 'Password Reset Code'
-            message = f'Your password reset code is: {code}'
-            from_email = settings.EMAIL_HOST_USER
-            recipient_list = [user.email]
-
             try:
-                send_mail(subject, message, from_email, recipient_list, auth_user=settings.EMAIL_HOST_USER, auth_password=settings.EMAIL_HOST_PASSWORD)
+                # Use the utility function to send the email
+                send_password_reset_code(user.email, code, user.username)
                 return Response({'detail': 'An email with a reset code has been sent to your email address.'}, status=status.HTTP_200_OK)
             except Exception as e:
                 return Response({'detail': 'Failed to send the reset code. Please try again later.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
 class ResetPasswordView(APIView):
     permission_classes = [AllowAny]
 
