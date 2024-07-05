@@ -59,6 +59,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data.pop('access', None)
 
         return data
+
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password_confirm = serializers.CharField(write_only=True)
     class Meta:
@@ -72,12 +73,12 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     def validate_username(self, value):
         if User.objects.filter(username=value).exists():
-            raise ValidationError("This username is already taken.")
+            raise serializers.ValidationError("This username is already taken.")
         return value
 
     def validate_email(self, value):
         if User.objects.filter(email=value).exists():
-            raise ValidationError("This email is already registered.")
+            raise serializers.ValidationError("This email is already registered.")
         return value
 
     def validate(self, data):
