@@ -106,6 +106,7 @@ class ChangePasswordView(APIView):
                 return Response({'error': 'Incorrect old password.'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
 class ForgotPasswordView(APIView):
     def generate_numeric_code(self):
         # Generate a 6-digit numeric code
@@ -126,7 +127,7 @@ class ForgotPasswordView(APIView):
             PasswordResetCode.objects.create(user=user, code=code)
 
             try:
-                # Use the utility function to send the email
+                # send the email
                 send_password_reset_code(user.email, code, user.username)
                 return Response({'detail': 'An email with a reset code has been sent to your email address.'}, status=status.HTTP_200_OK)
             except Exception as e:
@@ -149,8 +150,7 @@ class ResetPasswordView(APIView):
                 # Check if the reset code is expired
                 if password_reset_code.is_expired:
                     return Response({'detail': 'The reset code has expired.'}, status=status.HTTP_400_BAD_REQUEST)
-
-                    # Proceed with password reset
+                
                 user = password_reset_code.user
                 
                 # Check if the reset code is associated with a user
@@ -162,16 +162,12 @@ class ResetPasswordView(APIView):
                 else:
                     return Response({'detail': 'Invalid reset code.'}, status=status.HTTP_400_BAD_REQUEST)
 
-
                 # Check if the new password is different from the old one
                 if user.check_password(new_password):
                     return Response({'detail': 'New password cannot be the same as the old one.'}, status=status.HTTP_400_BAD_REQUEST)
-
                 # Set and save the new password
                 user.set_password(new_password)
                 user.save()
-
-
                 # Delete the reset code after successful password reset
                 password_reset_code.delete()
 

@@ -45,8 +45,6 @@ class TaskDestroy(generics.DestroyAPIView):
     def get_queryset(self):
         return Task.objects.filter(user=self.request.user)
 
-# feedback/views.py (updated)
-
 class FeedbackView(APIView):
     def post(self, request):
         serializer = FeedbackSerializer(data=request.data)
@@ -55,8 +53,11 @@ class FeedbackView(APIView):
             email = serializer.validated_data['email']
             message = serializer.validated_data['message']
             
+            from_email = f'TodoMaster <{settings.DEFAULT_FROM_EMAIL}>'
+
+
             subject = f"New Feedback Received from {username}"
-            from_email = settings.DEFAULT_FROM_EMAIL
+            from_email = from_email
             to_email = [settings.FEEDBACK_EMAIL]
             
             html_content = render_to_string('Auth_email/feedback.html', {
