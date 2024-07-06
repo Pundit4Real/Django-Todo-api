@@ -53,6 +53,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             'full_name': user.full_name,
             'username': user.username,
             'email': user.email,
+            'is_verified': user.is_verified,
+
         }
 
         data.pop('refresh', None)
@@ -99,6 +101,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         # Send verification email
         send_email_verification_code(validated_data['email'], email_verification_code, user.username)
         return user
+
+class ResendEmailVerificationSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
 
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)

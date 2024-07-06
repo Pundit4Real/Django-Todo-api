@@ -3,7 +3,7 @@ from Authentication.models import UserProfile,User
 
 # Register your models here.
 class UserAdmin(admin.ModelAdmin):
-    list_display = ['username','email','full_name','id','is_active']
+    list_display = ['username','email','full_name','id','is_verified','is_active']
     search_fields = ['email']
 
 class UserProfileAdmin(admin.ModelAdmin):

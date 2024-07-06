@@ -4,14 +4,30 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-# from email.mime.image import MIMEImage
-# import os
 
 
 def send_email_verification_code(email, verification_code, username):
     subject = 'Verify Your Email Address'
 
     html_message = render_to_string('Auth_email/verify-email.html', {'verification_code': verification_code, 'username': username})
+    
+    # Create the email with a custom sender name
+    from_email = f'TodoMaster <{settings.EMAIL_HOST_USER}>'
+    
+    email_message = EmailMultiAlternatives(
+        subject=subject,
+        body='',
+        from_email=from_email,
+        to=[email]
+    )
+    email_message.attach_alternative(html_message, "text/html")
+    
+    email_message.send()
+
+def resend_email_verification_code(email, verification_code, username):
+    subject = 'Verify Your Email Address'
+
+    html_message = render_to_string('Auth_email/resend-verify-email.html', {'verification_code': verification_code, 'username': username})
     
     # Create the email with a custom sender name
     from_email = f'TodoMaster <{settings.EMAIL_HOST_USER}>'
@@ -42,13 +58,5 @@ def send_password_reset_code(email, reset_code,username):
         to=[email]
     )
     email_message.attach_alternative(html_message, "text/html")
-
-    # # Attach image
-    # image_path = os.path.join(settings.BASE_DIR, 'images/logo.png')
-    # with open(image_path, 'rb') as img:
-    #     image = MIMEImage(img.read())
-    #     image.add_header('Content-ID', '<logo>')
-    #     image.add_header('Content-Disposition', 'inline', filename='logo.png')  # Inline display
-    #     email_message.attach(image)
 
     email_message.send()

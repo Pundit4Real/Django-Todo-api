@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 class UserManager(BaseUserManager):
 
-  def _create_user(self, email, username, password, is_active, is_staff, is_superuser, **extra_fields):
+  def _create_user(self, email, username, password, is_active, is_staff, is_superuser,is_verified, **extra_fields):
 
     if not email:
         raise ValueError(_('The Email field must be set'))
@@ -22,7 +22,8 @@ class UserManager(BaseUserManager):
         is_active=is_active,
         is_superuser=is_superuser, 
         last_login=now,
-        date_joined=now, 
+        date_joined=now,
+        is_verified=is_verified,
         **extra_fields
     )
     user.set_password(password)
@@ -30,7 +31,7 @@ class UserManager(BaseUserManager):
     return user
 
   def create_user(self, email, password,username=None, **extra_fields):
-    return self._create_user(email, username, password,False, False, False, **extra_fields)
+    return self._create_user(email, username, password,True, False, False, False,**extra_fields)
 
   def create_superuser(self, email, username, password, **extra_fields):
     user=self._create_user(email, username, password, True,True, True, **extra_fields)

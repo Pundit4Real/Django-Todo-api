@@ -1,13 +1,14 @@
 from django.urls import path
 from Authentication.views import (UserRegistrationView,MyTokenObtainPairView,EmailVerificationView,
                                   ChangePasswordView,ForgotPasswordView,ResetPasswordView,ProfileView,
-                                  UserProfileUpdateView
+                                  UserProfileUpdateView,ResendEmailVerificationView
                                   )
 
 urlpatterns = [
         # Auth URLs
     path('register/', UserRegistrationView.as_view(), name='register'),
     path('verify-email/', EmailVerificationView.as_view(), name='email-verification'),
+    path('resend-v-email/', ResendEmailVerificationView.as_view(), name='resend-verification-email'),
     path('login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
     path('forgot-password/', ForgotPasswordView.as_view(), name='forgot-password'),

@@ -16,11 +16,11 @@ from rest_framework import status
 from rest_framework import generics
 from rest_framework.views import APIView
 from Authentication.models import PasswordResetCode
-from Authentication.utils import send_password_reset_code
-
+from Authentication.utils import send_password_reset_code,resend_email_verification_code
 from Authentication.serializers import (UserRegistrationSerializer,MyTokenObtainPairSerializer,
                                         ChangePasswordSerializer,ForgotPasswordEmailSerializer,
-                                        PasswordResetSerializer,UserProfileSerializer,UserProfileUpdateSerializer
+                                        PasswordResetSerializer,UserProfileSerializer,UserProfileUpdateSerializer,
+                                        ResendEmailVerificationSerializer,generate_verification_code
                                         )
 # Create your views here.
 
@@ -37,7 +37,8 @@ class UserRegistrationView(APIView):
                 'full_name': user.full_name,
                 'username': user.username,
                 'email': user.email,
-                'email_verification_code': user.email_verification_code
+                'email_verification_code': user.email_verification_code,
+                'is_verified': user.is_verified,
             }
             return Response({'message': 'User registered successfully', 'response_data': response_data}, status=status.HTTP_201_CREATED)
         except Exception as e:
@@ -47,18 +48,16 @@ class EmailVerificationView(APIView):
     def post(self, request):
         verification_code = request.data.get('verification_code')
         email = request.data.get('email')
-        username = request.data.get('username')
 
         if not verification_code or not email:
             return Response({'message': 'Verification code and email are required'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            # send_password_reset_code(email, verification_code, username)
-            user = User.objects.get(email_verification_code=verification_code, email=email,is_active=False)
+            user = User.objects.get(email_verification_code=verification_code, email=email,is_verified=False)
         except User.DoesNotExist:
             return Response({'message': 'Invalid verification code.'}, status=status.HTTP_400_BAD_REQUEST)
         
-        user.is_active = True
+        user.is_verified = True
         user.email_verification_code = ''
         user.save()
 
@@ -74,10 +73,37 @@ class EmailVerificationView(APIView):
             'user_data': {
                 'full_name': user.full_name,
                 'username': user.username,
-                'email': user.email
+                'email': user.email,
+                'is_verified': user.is_verified,
+
             }
         }, status=status.HTTP_200_OK)
 
+class ResendEmailVerificationView(APIView):
+
+    def post(self, request):
+        email = request.data.get('email')
+        if not email:
+            return Response({'message': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({'message': 'No account found with this email.'}, status=status.HTTP_404_NOT_FOUND)
+
+        if user.is_verified:
+            return Response({'message': 'This account is already verified.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Generate a new verification code
+        email_verification_code = generate_verification_code()
+        user.email_verification_code = email_verification_code
+        user.save()
+
+        # Send verification email
+        resend_email_verification_code(user.email, email_verification_code, user.username)
+
+        return Response({'message': 'Verification email sent successfully.'}, status=status.HTTP_200_OK)
+   
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
