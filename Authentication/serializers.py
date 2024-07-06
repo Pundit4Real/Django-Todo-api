@@ -53,8 +53,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             'full_name': user.full_name,
             'username': user.username,
             'email': user.email,
-            'is_verified': user.is_verified,
-
         }
 
         data.pop('refresh', None)
