@@ -73,7 +73,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     def validate_username(self, value):
         if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError("This username is already taken.")
+            raise ValidationError("This username is already taken.")
         return value
 
     def validate_email(self, value):
