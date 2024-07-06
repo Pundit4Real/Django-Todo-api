@@ -1,11 +1,9 @@
 import random
 from django.conf import settings
-from django.shortcuts import render
-from django.core.mail import send_mail
+# from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
-from django.template.loader import render_to_string
 from django.contrib.auth import update_session_auth_hash
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -16,7 +14,7 @@ from rest_framework import status
 from rest_framework import generics
 from rest_framework.views import APIView
 from Authentication.models import PasswordResetCode
-from Authentication.utils import send_password_reset_code,resend_email_verification_code
+from Authentication.utils import send_password_reset_code,send_email_verification_code
 from Authentication.serializers import (UserRegistrationSerializer,MyTokenObtainPairSerializer,
                                         ChangePasswordSerializer,ForgotPasswordEmailSerializer,
                                         PasswordResetSerializer,UserProfileSerializer,UserProfileUpdateSerializer,
@@ -38,7 +36,7 @@ class UserRegistrationView(APIView):
                 'username': user.username,
                 'email': user.email,
                 'email_verification_code': user.email_verification_code,
-                'is_verified': user.is_verified,
+                # 'is_acitve': user.is_aci,
             }
             return Response({'message': 'User registered successfully', 'response_data': response_data}, status=status.HTTP_201_CREATED)
         except Exception as e:
@@ -53,11 +51,11 @@ class EmailVerificationView(APIView):
             return Response({'message': 'Verification code and email are required'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            user = User.objects.get(email_verification_code=verification_code, email=email,is_verified=False)
+            user = User.objects.get(email_verification_code=verification_code, email=email,is_active=False)
         except User.DoesNotExist:
             return Response({'message': 'Invalid verification code.'}, status=status.HTTP_400_BAD_REQUEST)
         
-        user.is_verified = True
+        user.is_active = True
         user.email_verification_code = ''
         user.save()
 
@@ -74,7 +72,7 @@ class EmailVerificationView(APIView):
                 'full_name': user.full_name,
                 'username': user.username,
                 'email': user.email,
-                'is_verified': user.is_verified,
+                'is_active': user.is_active,
 
             }
         }, status=status.HTTP_200_OK)
@@ -91,8 +89,8 @@ class ResendEmailVerificationView(APIView):
         except User.DoesNotExist:
             return Response({'message': 'No account found with this email.'}, status=status.HTTP_404_NOT_FOUND)
 
-        if user.is_verified:
-            return Response({'message': 'This account is already verified.'}, status=status.HTTP_400_BAD_REQUEST)
+        # if user.is_verified:
+        #     return Response({'message': 'This account is already verified.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Generate a new verification code
         email_verification_code = generate_verification_code()
@@ -100,7 +98,7 @@ class ResendEmailVerificationView(APIView):
         user.save()
 
         # Send verification email
-        resend_email_verification_code(user.email, email_verification_code, user.username)
+        send_email_verification_code(user.email, email_verification_code, user.username)
 
         return Response({'message': 'Verification email sent successfully.'}, status=status.HTTP_200_OK)
    

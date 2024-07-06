@@ -20,7 +20,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=False)
     last_login = models.DateTimeField(null=True, blank=True)
     date_joined = models.DateTimeField(default=timezone.now)
-    is_verified = models.BooleanField(default=False)
+    # is_verified = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ['username']
@@ -39,7 +39,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.username if self.username else self.email
 
-
 class PasswordResetCode(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     code = models.CharField(max_length=6)
@@ -48,7 +47,6 @@ class PasswordResetCode(models.Model):
 
     def __str__(self):
         return str(self.code)
-
 
 class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='userprofile')
