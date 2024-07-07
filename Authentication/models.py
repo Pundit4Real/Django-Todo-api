@@ -48,12 +48,20 @@ class PasswordResetCode(models.Model):
     def __str__(self):
         return str(self.code)
 
+# models.py
+
+from django.db import models
+from django.conf import settings
+from phonenumber_field.modelfields import PhoneNumberField
+
 class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='userprofile')
     full_name = models.CharField(max_length=150, null=True, blank=True)
     username = models.CharField(max_length=50, null=True, blank=True)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
-    
+    country = models.CharField(max_length=100, default='')
+    phone = PhoneNumberField(null=True, blank=True)  # Updated phone field
+
     def __str__(self):
         if self.user.username:
             return f"{self.user.username}'s Profile"
@@ -61,4 +69,3 @@ class UserProfile(models.Model):
             return f"{self.full_name}'s Profile"
         else:
             return "User Profile"
-    
