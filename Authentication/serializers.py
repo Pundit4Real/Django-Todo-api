@@ -119,9 +119,9 @@ class PasswordResetSerializer(serializers.Serializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'full_name', 'email', 'username', 'avatar','country','phone']
+        fields = ['id', 'full_name', 'email', 'username', 'avatar']
 
 class UserProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ['full_name', 'username', 'avatar','phone','country']
+        fields = ['full_name', 'username', 'avatar']
