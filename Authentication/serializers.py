@@ -53,8 +53,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             'full_name': user.full_name,
             'username': user.username,
             'email': user.email,
-            # 'phone': user.phone,
-            # 'country': user.country
+            'phone': user.phone,
+            'country': user.country
         }
 
         data.pop('refresh', None)
@@ -119,9 +119,9 @@ class PasswordResetSerializer(serializers.Serializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'full_name', 'email', 'username', 'avatar']
+        fields = ['id', 'full_name', 'email', 'username', 'avatar','phone','country']
 
 class UserProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ['full_name', 'username', 'avatar']
+        fields = ['full_name', 'username', 'avatar','phone','country']

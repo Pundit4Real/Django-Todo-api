@@ -14,6 +14,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=200)
     email_verification_code = models.CharField(max_length=50, null=True)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    phone = models.CharField(max_length=15, null=True, blank=True)  # Add phone field
+    country = models.CharField(max_length=100, null=True, blank=True)  # Add country field
 
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -53,7 +55,9 @@ class UserProfile(models.Model):
     full_name = models.CharField(max_length=150, null=True, blank=True)
     username = models.CharField(max_length=50, null=True, blank=True)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
-    
+    phone = models.CharField(max_length=15, null=True, blank=True)  # Add phone field
+    country = models.CharField(max_length=100, null=True, blank=True)  # Add country field
+
     def __str__(self):
         if self.user.username:
             return f"{self.user.username}'s Profile"
