@@ -183,7 +183,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'test123.moali@gmail.com'
-EMAIL_HOST_PASSWORD = 'zquzxxqleoptctif'
+EMAIL_HOST_PASSWORD = 'bevnfpjwkmodnuln'
 # Feedback email configurations
 DEFAULT_FROM_EMAIL = 'test123.moali@gmail.com'
 FEEDBACK_EMAIL = 'mohammedaalli088@gmail.com'
