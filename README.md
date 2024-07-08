@@ -49,4 +49,4 @@ This repository contains the backend API for a Todo application built with Djang
   - `POST /todo/send-feedback/`
  
 ## Swagger View of the Endpoint
-![swagger-view](images/img.png)
+![swagger-view](images/swagger.png)
