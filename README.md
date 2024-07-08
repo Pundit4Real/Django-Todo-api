@@ -30,6 +30,7 @@ This repository contains the backend API for a Todo application built with Djang
 - **Auth Endpoints**:
   - `POST /auth/register/`
   - `POST /auth/verify-email/`
+  - `POST /auth/resend-v-email/`
   - `POST /auth/login/`
   - `POST /auth/change-password/`
   - `POST /auth/forgot-password/`
