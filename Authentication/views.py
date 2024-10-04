@@ -31,8 +31,6 @@ class UserRegistrationView(APIView):
                 # Begin a transaction
                 serializer = UserRegistrationSerializer(data=request.data)
                 serializer.is_valid(raise_exception=True)
-                
-                # Only save after validation is passed
                 user = serializer.save()
 
                 response_data = {
@@ -41,16 +39,11 @@ class UserRegistrationView(APIView):
                     'email': user.email,
                     'email_verification_code': user.email_verification_code,
                 }
-
             # Commit the transaction and return success response
             return Response({'message': 'User registered successfully', 'response_data': response_data}, status=status.HTTP_201_CREATED)
-        except serializer.ValidationError as e:
-            # If validation fails, the user will not be created
-            return Response({'error': e.detail}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            # Catch any other exceptions and rollback transaction
+            # If any error occurs, transaction will be rolled back
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
         
 class EmailVerificationView(APIView):
     def post(self, request):
