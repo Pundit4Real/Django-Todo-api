@@ -14,7 +14,7 @@ from .models import User, UserProfile
 User = get_user_model()
 
 def generate_verification_code(length=6):
-    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
+    return ''.join(random.choices('0123456789', k=length))
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
@@ -64,7 +64,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password_confirm = serializers.CharField(write_only=True)
-
     class Meta:
         model = User
         fields = ['full_name', 'email', 'username', 'password', 'password_confirm']
@@ -76,7 +75,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     def validate_username(self, value):
         if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError("This username is already taken.")
+            raise ValidationError("This username is already taken.")
         return value
 
     def validate_email(self, value):
@@ -91,21 +90,18 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         if data.get('username') == data.get('password'):
             raise serializers.ValidationError("Password cannot be the same as the username.")
         return data
-
+    
     def create(self, validated_data):
-        # We can safely create the user here because all validations have passed.
         validated_data.pop('password_confirm')
         email_verification_code = generate_verification_code()
-        validated_data['email_verification_code'] = email_verification_code
 
+        validated_data['email_verification_code'] = email_verification_code
         user = User.objects.create_user(**validated_data)
 
-        # Send the verification email after the user is successfully created
+        # Send verification email
         send_email_verification_code(validated_data['email'], email_verification_code, user.username)
-
         return user
-    
-    
+
 class ResendEmailVerificationSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
 
