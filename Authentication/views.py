@@ -1,6 +1,6 @@
 import random
 from django.conf import settings
-# from django.shortcuts import render
+from django.db import transaction
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
@@ -27,19 +27,22 @@ User = get_user_model()
 class UserRegistrationView(APIView):
     def post(self, request):
         try:
-            serializer = UserRegistrationSerializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            user = serializer.save()
+            with transaction.atomic():
+                # Begin a transaction
+                serializer = UserRegistrationSerializer(data=request.data)
+                serializer.is_valid(raise_exception=True)
+                user = serializer.save()
 
-            response_data = {
-                'full_name': user.full_name,
-                'username': user.username,
-                'email': user.email,
-                'email_verification_code': user.email_verification_code,
-                # 'is_acitve': user.is_aci,
-            }
+                response_data = {
+                    'full_name': user.full_name,
+                    'username': user.username,
+                    'email': user.email,
+                    'email_verification_code': user.email_verification_code,
+                }
+            # Commit the transaction and return success response
             return Response({'message': 'User registered successfully', 'response_data': response_data}, status=status.HTTP_201_CREATED)
         except Exception as e:
+            # If any error occurs, transaction will be rolled back
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
 class EmailVerificationView(APIView):
